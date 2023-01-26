@@ -1,5 +1,7 @@
 #!/bin/bash
 
+
+# https://acloudguru.com/hands-on-labs/streaming-data-using-kafka-streams-to-count-words
 # download kafka at  https://www.apache.org/dyn/closer.cgi?path=/kafka/0.11.0.1/kafka_2.11-0.11.0.1.tgz
 # extract kafka in a folder
 
@@ -12,13 +14,13 @@ bin/zookeeper-server-start.sh config/zookeeper.properties
 bin/kafka-server-start.sh config/server.properties
 
 # create input topic
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic streams-plaintext-input
+bin/kafka-topics.sh --create --topic testtopicinput --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 
 # create output topic
-bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic streams-wordcount-output
+bin/kafka-topics.sh --create --topic testtopicoutput --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
 
 # start a kafka producer
-bin/kafka-console-producer.sh --broker-list localhost:9092 --topic streams-plaintext-input
+bin/kafka-console-producer.sh --broker-list localhost:9092 --topic testtopicinput
 # enter
 kafka streams udemy
 kafka data processing
@@ -26,11 +28,11 @@ kafka streams course
 # exit
 
 # verify the data has been written
-bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic streams-plaintext-input --from-beginning
+bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic testtopicinput --from-beginning
 
 # start a consumer on the output topic
 bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
-    --topic streams-wordcount-output \
+    --topic testtopicoutput \
     --from-beginning \
     --formatter kafka.tools.DefaultMessageFormatter \
     --property print.key=true \
@@ -40,5 +42,15 @@ bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 \
 
 # start the streams application
 bin/kafka-run-class.sh org.apache.kafka.streams.examples.wordcount.WordCountDemo
+
+# list of topic 
+bin/kafka-topics.sh --list --bootstrap-server localhost:9092    
+
+#delete topic
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete --topic testtopicoutput
+
+
+#describe topic
+bin/kafka-topics.sh --describe --bootstrap-server localhost:9092 --topic testtopicinput
 
 # verify the data has been written to the output topic!
